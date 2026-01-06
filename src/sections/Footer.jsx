@@ -93,8 +93,7 @@ const Footer = () => {
           <p>© 2026 Aarohan Cultural Fest. All rights reserved.</p>
           <div className="flex items-center gap-2">
             <span>Designed and Developed by</span>
-            <Heart size={12} className="text-red-500 fill-red-500 animate-pulse" />by
-            <a href="https://github.com/Ashmil-Kurikkal" target="_blank" rel="noopener noreferrer" className="text-amber-500 hover:text-amber-300 transition-colors">Ashmil Kurikkal</a>
+            <a href="https://github.com/Ashmil-Kurikkal" target="_blank" rel="noopener noreferrer" className="text-amber-500 hover:text-amber-300 transition-colors">Ashmil Kurikkal</a><Heart size={12} className="text-red-500 fill-red-500 animate-pulse" />
           </div>
         </div>
       </div>
