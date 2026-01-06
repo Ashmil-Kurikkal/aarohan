@@ -27,12 +27,12 @@ const videoPlaylist = [
 const galleryImages = [
   { 
     span: "col-span-1 md:col-span-2 row-span-2", 
-    url: "https://images.unsplash.com/photo-1459749411177-0473ef716175?auto=format&fit=crop&q=80&w=800", // Large Concert Crowd
+    url: "./a.webp", // Large Concert Crowd
     caption: "Main Stage Energy"
   },
   { 
     span: "col-span-1", 
-    url: "https://images.unsplash.com/photo-1514525253440-b393452e233e?auto=format&fit=crop&q=80&w=400", // Guitarist/Singer
+    url: "./b.jpg", // Guitarist/Singer
     caption: "Live Acoustics"
   },
   { 

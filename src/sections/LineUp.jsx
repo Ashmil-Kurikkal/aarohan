@@ -36,6 +36,7 @@ const artists = [
 const LineUp = () => {
   const [selectedArtist, setSelectedArtist] = useState(null);
 
+  // --- Scroll Lock Hook ---
   useEffect(() => {
     if (selectedArtist) {
       document.body.style.overflow = 'hidden';
@@ -48,16 +49,11 @@ const LineUp = () => {
   }, [selectedArtist]);
 
   return (
-    // Changed structure: Section is now relative and full width to hold the background
     <section className="relative py-24 px-6 overflow-hidden">
       
-      {/* 1. The Radial Gradient Background */}
-      {/* Creates a spotlight effect: Warm Amber center -> Deep Black edges */}
+      {/* Background Gradient */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-900/40 via-[#0a0400] to-black pointer-events-none -z-10" />
       
-      {/* Optional: Add a subtle grain or texture overlay here if desired */}
-      
-      {/* Content Container */}
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-20">
           <div className="w-24 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent mx-auto mb-6"></div>
