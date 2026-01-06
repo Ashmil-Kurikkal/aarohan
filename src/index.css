@@ -1,0 +1,41 @@
+/* 2. Import Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Audiowide&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amita:wght@400;700&subset=devanagari,latin&display=swap');
+
+
+/* 1. Standard Tailwind Directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 3. Base Styles */
+@layer base {
+  html {
+    font-size: 16px;
+    /* Changing to a rich, dark warm background (Dark reddish-brown/charcoal) */
+    background-color: #1a0505; 
+    background-image: 
+      radial-gradient(circle at 50% 0%, #4a0404 0%, transparent 70%),
+      radial-gradient(circle at 100% 100%, #2e0202 0%, transparent 50%);
+    color: #fff7ed; /* Orange-50 (Cream) text */
+  }
+}
+
+/* 4. Utility Classes */
+@layer utilities {
+  .font-audiowide { font-family: "Audiowide", sans-serif; }
+  .font-bebas { font-family: "Bebas Neue", sans-serif; }
+  .font-merriweather { font-family: "Merriweather", serif; }
+
+  /* Using Amita as the primary display font now */
+  .font-amita {
+    font-family: "Amita", serif;
+  }
+  
+  /* A utility for a gold text gradient */
+  .text-gradient-gold {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-600;
+  }
+}
