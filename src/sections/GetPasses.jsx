@@ -7,15 +7,21 @@ const GetPasses = ({ isOpen, setIsOpen }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  // --- Scroll Lock Hook ---
+  // --- STRICT SCROLL LOCK (LENIS COMPATIBLE) ---
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      if (window.lenis) window.lenis.stop();
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      if (window.lenis) window.lenis.start();
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      if (window.lenis) window.lenis.start();
     };
   }, [isOpen]);
 
@@ -54,7 +60,6 @@ const GetPasses = ({ isOpen, setIsOpen }) => {
           </button>
         </div>
       </section>
-
 
       {/* --- Animated Modal --- */}
       <AnimatePresence>

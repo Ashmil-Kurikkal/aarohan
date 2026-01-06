@@ -7,17 +7,17 @@ import { Play, Instagram, Image as ImageIcon, Pause, Volume2, VolumeX } from 'lu
 // 1. Video Playlist (Sequential Loop)
 const videoPlaylist = [
   {
-    src: "https://assets.mixkit.co/videos/preview/mixkit-concert-crowd-lights-2089-large.mp4",
+    src: "a.mp4",
     title: "The Awakening",
     subtitle: "Day 1 • Inauguration & Pro Show"
   },
   {
-    src: "https://assets.mixkit.co/videos/preview/mixkit-people-dancing-at-a-party-4369-large.mp4",
+    src: "b.mp4",
     title: "Rhythm of Night",
     subtitle: "Day 2 • DJ & Dance Battle"
   },
   {
-    src: "https://assets.mixkit.co/videos/preview/mixkit-audience-clapping-at-a-conference-2997-large.mp4",
+    src: "c.mp4",
     title: "The Grand Finale",
     subtitle: "Day 3 • Awards & Closing Ceremony"
   }
@@ -37,7 +37,7 @@ const galleryImages = [
   },
   { 
     span: "col-span-1", 
-    url: "https://images.unsplash.com/photo-1533174072545-e8d4aa97edf9?auto=format&fit=crop&q=80&w=400", // Spotlights
+    url: "spot.jpg", // Spotlights
     caption: "Spotlight Moments"
   },
   { 

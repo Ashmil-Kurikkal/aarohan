@@ -15,7 +15,7 @@ function App() {
 
   const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
-  // --- LENIS SMOOTH SCROLL ---
+  // --- LENIS SMOOTH SCROLL (Updated to Expose Instance) ---
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.2,
@@ -23,6 +23,9 @@ function App() {
       smoothWheel: true,
       wheelMultiplier: 1,
     });
+
+    // Attach to window so child components can pause it
+    window.lenis = lenis;
 
     function raf(time) {
       lenis.raf(time);
@@ -32,6 +35,7 @@ function App() {
 
     return () => {
       lenis.destroy();
+      window.lenis = null;
     };
   }, []);
 
@@ -119,15 +123,11 @@ function App() {
         </AnimatePresence>
 
         <main>
-          {/* 1. HERO */}
+          {/* HERO: Passes `setIsBookingOpen` to the Hero component */}
           <div id="hero" className="relative z-10 bg-[#1a0505]">
-             <Hero />
+             <Hero setIsBookingOpen={setIsBookingOpen} />
           </div>
           
-          {/* 2. LINEUP
-              - Mobile: 'relative min-h-screen' (Normal scroll, expands to fit content)
-              - Desktop: 'md:sticky md:top-0 md:h-screen md:overflow-hidden' (Sticks and creates curtain effect)
-          */}
           <div 
             id="lineup" 
             className="relative z-0 min-h-screen flex flex-col justify-center bg-[#1a0505] md:sticky md:top-0 md:h-screen md:overflow-hidden"
@@ -135,10 +135,6 @@ function App() {
             <LineUp />
           </div>
           
-          {/* 3. WRAPPER
-              - Mobile: 'relative z-10' (Stacks normally on top of LineUp)
-              - Desktop: 'md:shadow-...' (Adds depth when sliding over the sticky LineUp)
-          */}
           <div className="relative z-10 bg-[#1a0505] border-t border-white/10 md:shadow-[0_-50px_100px_rgba(0,0,0,0.9)]">
             
             <div id="passes">

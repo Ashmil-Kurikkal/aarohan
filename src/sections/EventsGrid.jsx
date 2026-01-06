@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import LiquidGlass from '../components/ui/LiquidGlass';
-import { Trophy, Crown, Palette, Music, X, Calendar, Clock, AlertCircle } from 'lucide-react';
+import { Trophy, Crown, Palette, Music, X, AlertCircle } from 'lucide-react';
 
 const events = [
   { 
@@ -73,15 +73,26 @@ const cardVariants = {
 const EventsGrid = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
 
-  // --- Scroll Lock Hook ---
+  // --- STRICT SCROLL LOCK (LENIS COMPATIBLE) ---
   useEffect(() => {
     if (selectedEvent) {
+      // 1. Lock CSS
       document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      // 2. Pause Lenis (if available)
+      if (window.lenis) window.lenis.stop();
     } else {
-      document.body.style.overflow = 'unset';
+      // 1. Unlock CSS
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      // 2. Resume Lenis
+      if (window.lenis) window.lenis.start();
     }
+
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      if (window.lenis) window.lenis.start();
     };
   }, [selectedEvent]);
 
@@ -105,7 +116,7 @@ const EventsGrid = () => {
            </button>
         </motion.div>
 
-        {/* Grid Layout with Staggered Animation */}
+        {/* Grid Layout */}
         <motion.div 
           variants={containerVariants}
           initial="hidden"
@@ -131,9 +142,7 @@ const EventsGrid = () => {
                 </div>
                 <h3 className="text-2xl font-amita font-bold text-white mb-1">{evt.title}</h3>
                 <p className="text-sm text-slate-400 mb-4">{evt.subtitle}</p>
-                
                 <div className="h-px w-full bg-white/10 mb-4" />
-                
                 <p className="text-amber-200/80 text-sm font-merriweather">
                   Prize: <span className="text-white font-bold">{evt.prize}</span>
                 </p>
@@ -149,7 +158,7 @@ const EventsGrid = () => {
       {/* Info Modal */}
       <AnimatePresence>
         {selectedEvent && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -184,7 +193,6 @@ const EventsGrid = () => {
                       <p className="text-amber-400 font-merriweather mb-6">{selectedEvent.subtitle}</p>
                   </div>
                   <p className="text-slate-300 leading-relaxed font-merriweather text-sm mb-6">{selectedEvent.description}</p>
-                  
                   <div className="mb-6">
                     <h4 className="text-amber-500 font-bold uppercase tracking-widest text-xs mb-2 flex items-center gap-2">
                       <AlertCircle size={14} /> Rules & Guidelines
@@ -198,7 +206,6 @@ const EventsGrid = () => {
                       ))}
                     </ul>
                   </div>
-
                    <button className="w-full py-3 bg-amber-600 hover:bg-amber-500 text-black font-bold uppercase tracking-widest rounded transition-colors shadow-lg shadow-amber-900/20">
                       Register Now
                     </button>
