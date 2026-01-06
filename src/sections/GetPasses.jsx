@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Ticket, X, Check, ArrowRight, Loader2 } from 'lucide-react';
 import LiquidGlass from '../components/ui/LiquidGlass';
 
-const GetPasses = () => {
-  const [isOpen, setIsOpen] = useState(false);
+// 1. Accept props for state management
+const GetPasses = ({ isOpen, setIsOpen }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -20,7 +20,7 @@ const GetPasses = () => {
 
   return (
     <>
-      {/* --- Trigger Section --- */}
+      {/* --- Trigger Section (In-page) --- */}
       <section className="relative py-20 px-6 bg-gradient-to-b from-[#1a0505] to-[#250808] border-y border-amber-500/10">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-10">
           <div className="text-center md:text-left">
