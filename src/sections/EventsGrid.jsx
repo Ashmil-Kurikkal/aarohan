@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import LiquidGlass from '../components/ui/LiquidGlass';
 import { Trophy, Crown, Palette, Music, X, Calendar, Clock, AlertCircle } from 'lucide-react';
 
-// ... (Your 'events' array stays exactly the same) ...
 const events = [
   { 
     title: "Mridangam", 
@@ -13,8 +12,8 @@ const events = [
     time: "10:00 AM - 4:00 PM",
     icon: <Music size={24} />,
     image: "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?q=80&w=1000&auto=format&fit=crop",
-    description: "The ultimate clash of musical titans. Fusion, rock, or classical – bring your best sound to the stage.",
-    rules: ["Time limit: 15 minutes", "Min 3 members", "No backing tracks"]
+    description: "The ultimate clash of musical titans. Fusion, rock, or classical – bring your best sound to the stage. Bands will be judged on harmony, stage presence, and crowd interaction.",
+    rules: ["Time limit: 15 minutes (including setup)", "Minimum 3 members per band", "No backing tracks allowed"]
   },
   { 
     title: "Nritya", 
@@ -24,8 +23,8 @@ const events = [
     time: "2:00 PM - 6:00 PM",
     icon: <Crown size={24} />,
     image: "https://images.unsplash.com/photo-1547153760-18fc86324498?q=80&w=1000&auto=format&fit=crop",
-    description: "Sync your steps and rhythm in this high-energy group dance battle.",
-    rules: ["Time limit: 8 minutes", "Team size: 6-12", "Props allowed"]
+    description: "Sync your steps and rhythm in this high-energy group dance battle. From classical Bharatanatyam to contemporary Hip-Hop, showcase your choreography.",
+    rules: ["Time limit: 8 minutes", "Team size: 6-12 members", "Props are allowed but must be cleared"]
   },
   { 
     title: "Chitra", 
@@ -35,8 +34,8 @@ const events = [
     time: "Ongoing",
     icon: <Palette size={24} />,
     image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=1000&auto=format&fit=crop",
-    description: "Let your canvas speak. Artists will capture the essence of the festival live.",
-    rules: ["Canvas provided", "Bring paints", "No digital art"]
+    description: "Let your canvas speak. Artists will capture the essence of the festival live. The theme will be given on the spot.",
+    rules: ["Canvas provided by organizers", "Bring your own paints/brushes", "Digital art is not permitted"]
   },
   { 
     title: "Natya", 
@@ -46,8 +45,8 @@ const events = [
     time: "11:00 AM - 1:00 PM",
     icon: <Trophy size={24} />,
     image: "https://images.unsplash.com/photo-1533174072545-e8d4aa97edf9?q=80&w=1000&auto=format&fit=crop",
-    description: "Voices that echo change. Perform compelling street plays.",
-    rules: ["Time limit: 12 minutes", "No mics", "English/Hindi"]
+    description: "Voices that echo change. Perform compelling street plays that touch upon social issues with satire, humor, and emotion.",
+    rules: ["Time limit: 12 minutes", "No microphones allowed", "Language: English or Hindi"]
   },
 ];
 
@@ -56,7 +55,7 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.15 // Slightly faster stagger
+      staggerChildren: 0.15 
     }
   }
 };
@@ -74,6 +73,7 @@ const cardVariants = {
 const EventsGrid = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
 
+  // --- Scroll Lock Hook ---
   useEffect(() => {
     if (selectedEvent) {
       document.body.style.overflow = 'hidden';
@@ -110,7 +110,7 @@ const EventsGrid = () => {
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }} // Keeps amount low for better mobile trigger
+          viewport={{ once: true, amount: 0.1 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {events.map((evt, i) => (
@@ -184,6 +184,21 @@ const EventsGrid = () => {
                       <p className="text-amber-400 font-merriweather mb-6">{selectedEvent.subtitle}</p>
                   </div>
                   <p className="text-slate-300 leading-relaxed font-merriweather text-sm mb-6">{selectedEvent.description}</p>
+                  
+                  <div className="mb-6">
+                    <h4 className="text-amber-500 font-bold uppercase tracking-widest text-xs mb-2 flex items-center gap-2">
+                      <AlertCircle size={14} /> Rules & Guidelines
+                    </h4>
+                    <ul className="space-y-2">
+                      {selectedEvent.rules.map((rule, idx) => (
+                        <li key={idx} className="flex items-start gap-2 text-sm text-slate-400">
+                          <span className="mt-1.5 w-1 h-1 rounded-full bg-amber-500 shrink-0" />
+                          {rule}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
                    <button className="w-full py-3 bg-amber-600 hover:bg-amber-500 text-black font-bold uppercase tracking-widest rounded transition-colors shadow-lg shadow-amber-900/20">
                       Register Now
                     </button>

@@ -6,6 +6,7 @@ import GetPasses from './sections/GetPasses';
 import Gallery from './sections/Gallery';
 import { Menu, X, Ticket } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
+import Footer from './sections/Footer';
 import Lenis from 'lenis';
 
 function App() {
@@ -152,9 +153,7 @@ function App() {
                <Gallery />
             </div>
 
-            <footer className="py-10 text-center text-slate-500 text-sm border-t border-white/5 bg-[#0f0303]">
-              <p className="font-merriweather">© 2026 Aarohan Cultural Fest. FISAT</p>
-            </footer>
+            <Footer />
           </div>
         </main>
       </div>

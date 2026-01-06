@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Ticket, X, Check, ArrowRight, Loader2 } from 'lucide-react';
 import LiquidGlass from '../components/ui/LiquidGlass';
 
-// 1. Accept props for state management
 const GetPasses = ({ isOpen, setIsOpen }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  // --- Scroll Lock Hook ---
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
