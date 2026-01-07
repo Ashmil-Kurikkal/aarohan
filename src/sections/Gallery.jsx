@@ -7,12 +7,12 @@ import { Play, Instagram, Image as ImageIcon, Pause, Volume2, VolumeX } from 'lu
 // 1. Video Playlist (Sequential Loop)
 const videoPlaylist = [
   {
-    src: "a.mp4",
+    src: "b.mp4",
     title: "The Awakening",
     subtitle: "Day 1 • Inauguration & Pro Show"
   },
   {
-    src: "b.mp4",
+    src: "a.mp4.mp4",
     title: "Rhythm of Night",
     subtitle: "Day 2 • DJ & Dance Battle"
   },
