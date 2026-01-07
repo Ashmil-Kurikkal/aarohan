@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom'; // IMPORT PORTAL
 import { motion, AnimatePresence } from 'framer-motion';
 import LiquidGlass from '../components/ui/LiquidGlass';
 import { Music2, Mic, X, Clock, MapPin, Instagram, Youtube, Sparkles } from 'lucide-react';
@@ -33,11 +34,15 @@ const artists = [
   },
 ];
 
-const LineUp = () => {
+const LineUp = ({ onModalChange }) => {
   const [selectedArtist, setSelectedArtist] = useState(null);
 
-  // --- STRICT SCROLL LOCK (LENIS COMPATIBLE) ---
+  // --- STRICT SCROLL LOCK (LENIS COMPATIBLE) & NAV HIDE ---
   useEffect(() => {
+    if (onModalChange) {
+      onModalChange(!!selectedArtist);
+    }
+
     if (selectedArtist) {
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
@@ -51,8 +56,9 @@ const LineUp = () => {
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
       if (window.lenis) window.lenis.start();
+      if (onModalChange) onModalChange(false);
     };
-  }, [selectedArtist]);
+  }, [selectedArtist, onModalChange]);
 
   return (
     <section className="relative py-24 px-6 overflow-hidden">
@@ -103,97 +109,102 @@ const LineUp = () => {
         </div>
       </div>
 
-      <AnimatePresence>
-        {selectedArtist && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/90 backdrop-blur-md" 
-              onClick={() => setSelectedArtist(null)}
-            />
-            
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ duration: 0.3 }}
-              className="relative w-full max-w-4xl max-h-[90vh] z-10"
-            >
-              <LiquidGlass className="w-full h-full overflow-hidden flex flex-col md:flex-row shadow-2xl shadow-amber-900/50 border-amber-500/30">
-                <button 
-                  onClick={() => setSelectedArtist(null)}
-                  className="absolute top-4 right-4 z-30 p-2 rounded-full bg-black/40 text-white/70 hover:bg-amber-500 hover:text-black transition-colors backdrop-blur-sm"
-                >
-                  <X size={20} />
-                </button>
+      {/* --- PORTAL WRAPPER FOR MODAL --- */}
+      {createPortal(
+        <AnimatePresence>
+          {selectedArtist && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 bg-black/90 backdrop-blur-md" 
+                onClick={() => setSelectedArtist(null)}
+              />
+              
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                transition={{ duration: 0.3 }}
+                // UPDATED: max-w-3xl for a smaller popup
+                className="relative w-full max-w-3xl max-h-[85vh] z-10"
+              >
+                <LiquidGlass className="w-full h-full overflow-hidden flex flex-col md:flex-row shadow-2xl shadow-amber-900/50 border-amber-500/30">
+                  <button 
+                    onClick={() => setSelectedArtist(null)}
+                    className="absolute top-4 right-4 z-30 p-2 rounded-full bg-black/40 text-white/70 hover:bg-amber-500 hover:text-black transition-colors backdrop-blur-sm"
+                  >
+                    <X size={20} />
+                  </button>
 
-                <div className="w-full md:w-1/2 h-64 md:h-auto relative shrink-0">
-                  <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black via-transparent to-transparent z-10" />
-                  <img 
-                    src={selectedArtist.img} 
-                    alt={selectedArtist.name} 
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute bottom-4 left-4 md:hidden z-20">
-                    <h3 className="text-3xl font-amita font-bold text-white">{selectedArtist.name}</h3>
-                    <p className="text-amber-400 font-merriweather text-sm">{selectedArtist.role}</p>
-                  </div>
-                </div>
-
-                <div className="w-full md:w-1/2 p-8 md:p-10 overflow-y-auto bg-black/40 flex flex-col justify-center">
-                  <div className="hidden md:block mb-6">
-                    <div className="flex items-center gap-2 text-amber-500 mb-2">
-                       <Mic size={18} />
-                       <span className="uppercase tracking-widest text-xs font-bold">{selectedArtist.role}</span>
-                    </div>
-                    <h3 className="text-5xl font-amita font-bold text-white mb-2">{selectedArtist.name}</h3>
-                  </div>
-
-                  <div className="flex flex-col gap-3 mb-8 text-sm text-slate-300 bg-white/5 p-4 rounded-xl border border-white/5">
-                    <div className="flex items-center gap-3">
-                      <Clock size={16} className="text-amber-500" />
-                      <span className="font-merriweather">{selectedArtist.time}</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <MapPin size={16} className="text-amber-500" />
-                      <span className="font-merriweather">{selectedArtist.stage}</span>
+                  <div className="w-full md:w-2/5 h-64 md:h-auto relative shrink-0">
+                    <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black via-transparent to-transparent z-10" />
+                    <img 
+                      src={selectedArtist.img} 
+                      alt={selectedArtist.name} 
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute bottom-4 left-4 md:hidden z-20">
+                      <h3 className="text-3xl font-amita font-bold text-white">{selectedArtist.name}</h3>
+                      <p className="text-amber-400 font-merriweather text-sm">{selectedArtist.role}</p>
                     </div>
                   </div>
 
-                  <div className="mb-8">
-                    <h4 className="text-amber-500 font-bold uppercase tracking-widest text-xs mb-3">About the Artist</h4>
-                    <p className="text-slate-300 leading-relaxed font-merriweather text-sm">
-                      {selectedArtist.bio}
-                    </p>
-                  </div>
+                  <div className="w-full md:w-3/5 p-6 md:p-8 overflow-y-auto bg-black/40 flex flex-col justify-center">
+                    <div className="hidden md:block mb-4">
+                      <div className="flex items-center gap-2 text-amber-500 mb-2">
+                         <Mic size={18} />
+                         <span className="uppercase tracking-widest text-xs font-bold">{selectedArtist.role}</span>
+                      </div>
+                      <h3 className="text-4xl font-amita font-bold text-white mb-2">{selectedArtist.name}</h3>
+                    </div>
 
-                  <div className="mb-8">
-                    <h4 className="text-amber-500 font-bold uppercase tracking-widest text-xs mb-3">Popular Tracks</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedArtist.tracks.map((track, i) => (
-                        <span key={i} className="px-3 py-1 bg-amber-900/30 border border-amber-500/20 rounded-full text-amber-100/70 text-xs">
-                          {track}
-                        </span>
-                      ))}
+                    <div className="flex flex-col gap-2 mb-6 text-sm text-slate-300 bg-white/5 p-3 rounded-xl border border-white/5">
+                      <div className="flex items-center gap-3">
+                        <Clock size={16} className="text-amber-500" />
+                        <span className="font-merriweather">{selectedArtist.time}</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <MapPin size={16} className="text-amber-500" />
+                        <span className="font-merriweather">{selectedArtist.stage}</span>
+                      </div>
+                    </div>
+
+                    <div className="mb-6">
+                      <h4 className="text-amber-500 font-bold uppercase tracking-widest text-xs mb-2">About the Artist</h4>
+                      <p className="text-slate-300 leading-relaxed font-merriweather text-sm">
+                        {selectedArtist.bio}
+                      </p>
+                    </div>
+
+                    <div className="mb-6">
+                      <h4 className="text-amber-500 font-bold uppercase tracking-widest text-xs mb-2">Popular Tracks</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedArtist.tracks.map((track, i) => (
+                          <span key={i} className="px-3 py-1 bg-amber-900/30 border border-amber-500/20 rounded-full text-amber-100/70 text-xs">
+                            {track}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex gap-4 pt-4 border-t border-white/10">
+                      <button className="flex items-center gap-2 text-slate-400 hover:text-amber-400 transition-colors text-sm font-bold uppercase tracking-wider">
+                        <Instagram size={18} /> Instagram
+                      </button>
+                      <button className="flex items-center gap-2 text-slate-400 hover:text-red-500 transition-colors text-sm font-bold uppercase tracking-wider">
+                        <Youtube size={18} /> YouTube
+                      </button>
                     </div>
                   </div>
-
-                  <div className="flex gap-4 pt-6 border-t border-white/10">
-                    <button className="flex items-center gap-2 text-slate-400 hover:text-amber-400 transition-colors text-sm font-bold uppercase tracking-wider">
-                      <Instagram size={18} /> Instagram
-                    </button>
-                    <button className="flex items-center gap-2 text-slate-400 hover:text-red-500 transition-colors text-sm font-bold uppercase tracking-wider">
-                      <Youtube size={18} /> YouTube
-                    </button>
-                  </div>
-                </div>
-              </LiquidGlass>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+                </LiquidGlass>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </section>
   );
 };

@@ -11,11 +11,19 @@ import Lenis from 'lenis';
 
 function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  // State for the Booking Modal (Internal to App)
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+
+  // State for Child Modals (EventsGrid, LineUp)
+  const [externalModalOpen, setExternalModalOpen] = useState(false);
+
+  // Logic to hide Navbar: If booking is open OR any external modal is open
+  const shouldHideNav = isBookingOpen || externalModalOpen;
 
   const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
-  // --- LENIS SMOOTH SCROLL (Updated to Expose Instance) ---
+  // --- LENIS SMOOTH SCROLL ---
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.2,
@@ -24,7 +32,6 @@ function App() {
       wheelMultiplier: 1,
     });
 
-    // Attach to window so child components can pause it
     window.lenis = lenis;
 
     function raf(time) {
@@ -66,8 +73,11 @@ function App() {
 
       <div className="bg-[#1a0505] text-slate-200 selection:bg-amber-500/30 min-h-screen w-full no-scrollbar">
         
-        {/* Navigation */}
-        <nav className={`fixed top-0 w-full z-50 px-6 py-4 transition-all duration-300 ${isMobileMenuOpen ? 'backdrop-blur-xl bg-black/50': 'backdrop-blur-sm'}`}>
+        {/* Navigation - Added transform logic to slide up when modal is open */}
+        <nav className={`fixed top-0 w-full z-50 px-6 py-4 transition-all duration-500 ease-in-out ${
+            shouldHideNav ? '-translate-y-full opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'
+          } ${isMobileMenuOpen ? 'backdrop-blur-xl bg-black/50': 'backdrop-blur-sm'}`}>
+          
           <div className="flex justify-between items-center max-w-7xl mx-auto">
             <div className="flex flex-col items-start cursor-pointer z-50 group select-none" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
                 <h1 className="mt-3 font-amita font-bold text-3xl md:text-4xl tracking-wider text-transparent bg-clip-text bg-gradient-to-b from-amber-100 via-amber-400 to-amber-700 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
@@ -123,7 +133,6 @@ function App() {
         </AnimatePresence>
 
         <main>
-          {/* HERO: Passes `setIsBookingOpen` to the Hero component */}
           <div id="hero" className="relative z-10 bg-[#1a0505]">
              <Hero setIsBookingOpen={setIsBookingOpen} />
           </div>
@@ -132,7 +141,8 @@ function App() {
             id="lineup" 
             className="relative z-0 min-h-screen flex flex-col justify-center bg-[#1a0505] md:sticky md:top-0 md:h-screen md:overflow-hidden"
           >
-            <LineUp />
+            {/* Pass the state setter to LineUp */}
+            <LineUp onModalChange={setExternalModalOpen} />
           </div>
           
           <div className="relative z-10 bg-[#1a0505] border-t border-white/10 md:shadow-[0_-50px_100px_rgba(0,0,0,0.9)]">
@@ -142,7 +152,8 @@ function App() {
             </div>
 
             <div id="competitions">
-              <EventsGrid />
+              {/* Pass the state setter to EventsGrid */}
+              <EventsGrid onModalChange={setExternalModalOpen} />
             </div>
 
             <div id="gallery">

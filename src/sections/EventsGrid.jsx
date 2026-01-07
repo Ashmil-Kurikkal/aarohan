@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom'; // IMPORT PORTAL
 import { motion, AnimatePresence } from 'framer-motion';
 import LiquidGlass from '../components/ui/LiquidGlass';
 import { Trophy, Crown, Palette, Music, X, AlertCircle } from 'lucide-react';
@@ -70,22 +71,22 @@ const cardVariants = {
   }
 };
 
-const EventsGrid = () => {
+const EventsGrid = ({ onModalChange }) => {
   const [selectedEvent, setSelectedEvent] = useState(null);
 
-  // --- STRICT SCROLL LOCK (LENIS COMPATIBLE) ---
+  // --- STRICT SCROLL LOCK (LENIS COMPATIBLE) & NAV HIDE ---
   useEffect(() => {
+    if (onModalChange) {
+      onModalChange(!!selectedEvent);
+    }
+
     if (selectedEvent) {
-      // 1. Lock CSS
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
-      // 2. Pause Lenis (if available)
       if (window.lenis) window.lenis.stop();
     } else {
-      // 1. Unlock CSS
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
-      // 2. Resume Lenis
       if (window.lenis) window.lenis.start();
     }
 
@@ -93,8 +94,9 @@ const EventsGrid = () => {
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
       if (window.lenis) window.lenis.start();
+      if (onModalChange) onModalChange(false);
     };
-  }, [selectedEvent]);
+  }, [selectedEvent, onModalChange]);
 
   return (
     <section className="py-24 px-6 relative bg-[#1a0505]">
@@ -155,66 +157,70 @@ const EventsGrid = () => {
         </motion.div>
       </div>
 
-      {/* Info Modal */}
-      <AnimatePresence>
-        {selectedEvent && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/80 backdrop-blur-md" 
-              onClick={() => setSelectedEvent(null)}
-            />
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-              className="relative w-full max-w-3xl max-h-[90vh] z-10"
-            >
-              <LiquidGlass className="w-full h-full overflow-hidden flex flex-col md:flex-row shadow-2xl shadow-amber-900/40 border-amber-500/30">
-                 <button 
-                  onClick={() => setSelectedEvent(null)}
-                  className="absolute top-4 right-4 z-20 p-2 rounded-full bg-black/40 text-white/70 hover:bg-amber-500 hover:text-black transition-colors backdrop-blur-sm"
-                >
-                  <X size={20} />
-                </button>
-                <div className="w-full md:w-2/5 h-64 md:h-auto relative shrink-0">
-                  <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black via-black/20 to-transparent z-10" />
-                  <img src={selectedEvent.image} alt={selectedEvent.title} className="w-full h-full object-cover" />
-                  <div className="absolute bottom-4 left-4 md:hidden z-20">
-                     <h3 className="text-3xl font-amita font-bold text-white">{selectedEvent.title}</h3>
+      {/* --- PORTAL WRAPPER FOR MODAL --- */}
+      {createPortal(
+        <AnimatePresence>
+          {selectedEvent && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 bg-black/80 backdrop-blur-md" 
+                onClick={() => setSelectedEvent(null)}
+              />
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                // UPDATED: max-w-2xl for smaller popup
+                className="relative w-full max-w-2xl max-h-[85vh] z-10"
+              >
+                <LiquidGlass className="w-full h-full overflow-hidden flex flex-col md:flex-row shadow-2xl shadow-amber-900/40 border-amber-500/30">
+                   <button 
+                    onClick={() => setSelectedEvent(null)}
+                    className="absolute top-4 right-4 z-20 p-2 rounded-full bg-black/40 text-white/70 hover:bg-amber-500 hover:text-black transition-colors backdrop-blur-sm"
+                  >
+                    <X size={20} />
+                  </button>
+                  <div className="w-full md:w-2/5 h-48 md:h-auto relative shrink-0">
+                    <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black via-black/20 to-transparent z-10" />
+                    <img src={selectedEvent.image} alt={selectedEvent.title} className="w-full h-full object-cover" />
+                    <div className="absolute bottom-4 left-4 md:hidden z-20">
+                       <h3 className="text-3xl font-amita font-bold text-white">{selectedEvent.title}</h3>
+                    </div>
                   </div>
-                </div>
-                <div className="w-full md:w-3/5 p-8 overflow-y-auto bg-black/40">
-                  <div className="hidden md:block">
-                      <h3 className="text-4xl font-amita font-bold text-white mb-1">{selectedEvent.title}</h3>
-                      <p className="text-amber-400 font-merriweather mb-6">{selectedEvent.subtitle}</p>
+                  <div className="w-full md:w-3/5 p-6 md:p-8 overflow-y-auto bg-black/40">
+                    <div className="hidden md:block">
+                        <h3 className="text-3xl font-amita font-bold text-white mb-1">{selectedEvent.title}</h3>
+                        <p className="text-amber-400 font-merriweather mb-6 text-sm">{selectedEvent.subtitle}</p>
+                    </div>
+                    <p className="text-slate-300 leading-relaxed font-merriweather text-sm mb-6">{selectedEvent.description}</p>
+                    <div className="mb-6">
+                      <h4 className="text-amber-500 font-bold uppercase tracking-widest text-xs mb-2 flex items-center gap-2">
+                        <AlertCircle size={14} /> Rules & Guidelines
+                      </h4>
+                      <ul className="space-y-2">
+                        {selectedEvent.rules.map((rule, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-xs text-slate-400">
+                            <span className="mt-1.5 w-1 h-1 rounded-full bg-amber-500 shrink-0" />
+                            {rule}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                     <button className="w-full py-3 bg-amber-600 hover:bg-amber-500 text-black font-bold uppercase tracking-widest rounded transition-colors shadow-lg shadow-amber-900/20 text-sm">
+                        Register Now
+                      </button>
                   </div>
-                  <p className="text-slate-300 leading-relaxed font-merriweather text-sm mb-6">{selectedEvent.description}</p>
-                  <div className="mb-6">
-                    <h4 className="text-amber-500 font-bold uppercase tracking-widest text-xs mb-2 flex items-center gap-2">
-                      <AlertCircle size={14} /> Rules & Guidelines
-                    </h4>
-                    <ul className="space-y-2">
-                      {selectedEvent.rules.map((rule, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-sm text-slate-400">
-                          <span className="mt-1.5 w-1 h-1 rounded-full bg-amber-500 shrink-0" />
-                          {rule}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                   <button className="w-full py-3 bg-amber-600 hover:bg-amber-500 text-black font-bold uppercase tracking-widest rounded transition-colors shadow-lg shadow-amber-900/20">
-                      Register Now
-                    </button>
-                </div>
-              </LiquidGlass>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+                </LiquidGlass>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </section>
   );
 };
