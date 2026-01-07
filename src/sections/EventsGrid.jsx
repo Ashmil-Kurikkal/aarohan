@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom'; // IMPORT PORTAL
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import LiquidGlass from '../components/ui/LiquidGlass';
-import { Trophy, Crown, Palette, Music, X, AlertCircle } from 'lucide-react';
+import { Trophy, Crown, Palette, Music, X, AlertCircle, Calendar, Clock, MapPin, ChevronRight } from 'lucide-react';
 
+// --- DATA: COMPETITIONS ---
 const events = [
   { 
     title: "Mridangam", 
@@ -51,13 +52,29 @@ const events = [
   },
 ];
 
+// --- DATA: SCHEDULE ---
+const scheduleData = {
+  "Day 1": [
+    { time: "09:00 AM", title: "Inauguration Ceremony", loc: "Main Auditorium", type: "General" },
+    { time: "10:00 AM", title: "Mridangam (Battle of Bands)", loc: "Open Air Stage", type: "Competition" },
+    { time: "11:00 AM", title: "Tech Talk: AI Future", loc: "Seminar Hall A", type: "Workshop" },
+    { time: "02:00 PM", title: "Chitra (Live Art) Begins", loc: "Quadrangle", type: "Competition" },
+    { time: "06:00 PM", title: "DJ Night ft. Lost Stories", loc: "Main Ground", type: "Pro-Show" },
+  ],
+  "Day 2": [
+    { time: "09:30 AM", title: "Hackathon Finale", loc: "CS Block", type: "Competition" },
+    { time: "11:00 AM", title: "Stand-up Comedy", loc: "Main Auditorium", type: "Entertainment" },
+    { time: "02:00 PM", title: "Nritya (Group Dance)", loc: "Main Stage", type: "Competition" },
+    { time: "05:00 PM", title: "Fashion Show", loc: "Ramp Area", type: "Entertainment" },
+    { time: "07:00 PM", title: "Closing Ceremony", loc: "Main Stage", type: "General" },
+  ]
+};
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.15 
-    }
+    transition: { staggerChildren: 0.15 }
   }
 };
 
@@ -73,14 +90,19 @@ const cardVariants = {
 
 const EventsGrid = ({ onModalChange }) => {
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [isScheduleOpen, setIsScheduleOpen] = useState(false);
+  const [activeDay, setActiveDay] = useState("Day 1");
+
+  // Helper to check if ANY modal is open
+  const isAnyModalOpen = selectedEvent || isScheduleOpen;
 
   // --- STRICT SCROLL LOCK (LENIS COMPATIBLE) & NAV HIDE ---
   useEffect(() => {
     if (onModalChange) {
-      onModalChange(!!selectedEvent);
+      onModalChange(!!isAnyModalOpen);
     }
 
-    if (selectedEvent) {
+    if (isAnyModalOpen) {
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
       if (window.lenis) window.lenis.stop();
@@ -96,7 +118,7 @@ const EventsGrid = ({ onModalChange }) => {
       if (window.lenis) window.lenis.start();
       if (onModalChange) onModalChange(false);
     };
-  }, [selectedEvent, onModalChange]);
+  }, [isAnyModalOpen, onModalChange]);
 
   return (
     <section className="py-24 px-6 relative bg-[#1a0505]">
@@ -113,7 +135,11 @@ const EventsGrid = ({ onModalChange }) => {
              <h2 className="text-4xl md:text-5xl font-amita font-bold text-white mb-2">Competitions</h2>
              <p className="text-amber-200/60 font-merriweather">Where talent meets tradition.</p>
            </div>
-           <button className="text-amber-400 hover:text-amber-200 font-bold tracking-widest uppercase text-sm mt-6 md:mt-0 transition-colors">
+           <button 
+             onClick={() => setIsScheduleOpen(true)}
+             className="text-amber-400 hover:text-amber-200 font-bold tracking-widest uppercase text-sm mt-6 md:mt-0 transition-colors flex items-center gap-2 group"
+           >
+             <Calendar size={16} className="group-hover:-translate-y-0.5 transition-transform" />
              View Schedule →
            </button>
         </motion.div>
@@ -157,9 +183,11 @@ const EventsGrid = ({ onModalChange }) => {
         </motion.div>
       </div>
 
-      {/* --- PORTAL WRAPPER FOR MODAL --- */}
+      {/* --- MODAL SYSTEM --- */}
       {createPortal(
         <AnimatePresence>
+          
+          {/* 1. INDIVIDUAL EVENT MODAL */}
           {selectedEvent && (
             <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
               <motion.div 
@@ -176,9 +204,6 @@ const EventsGrid = ({ onModalChange }) => {
                 transition={{ duration: 0.3, ease: "easeOut" }}
                 className="relative w-full max-w-2xl max-h-[85vh] z-10"
               >
-                {/* UPDATED: md:min-h-[450px] forces a standard size 
-                   so the modal feels substantial even if text is short. 
-                */}
                 <LiquidGlass className="w-full h-full md:min-h-[450px] overflow-hidden flex flex-col md:flex-row shadow-2xl shadow-amber-900/40 border-amber-500/30">
                    <button 
                     onClick={() => setSelectedEvent(null)}
@@ -188,8 +213,6 @@ const EventsGrid = ({ onModalChange }) => {
                   </button>
                   <div className="w-full md:w-2/5 h-48 md:h-auto relative shrink-0">
                     <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black via-black/20 to-transparent z-10" />
-                    {/* UPDATED: absolute inset-0 to prevent image intrinsic height from breaking layout
-                    */}
                     <img src={selectedEvent.image} alt={selectedEvent.title} className="absolute inset-0 w-full h-full object-cover" />
                     <div className="absolute bottom-4 left-4 md:hidden z-20">
                        <h3 className="text-3xl font-amita font-bold text-white">{selectedEvent.title}</h3>
@@ -222,6 +245,118 @@ const EventsGrid = ({ onModalChange }) => {
               </motion.div>
             </div>
           )}
+
+          {/* 2. SCHEDULE POPUP MODAL */}
+          {isScheduleOpen && (
+             <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+               {/* Backdrop */}
+               <motion.div 
+                 initial={{ opacity: 0 }}
+                 animate={{ opacity: 1 }}
+                 exit={{ opacity: 0 }}
+                 className="absolute inset-0 bg-black/85 backdrop-blur-lg" 
+                 onClick={() => setIsScheduleOpen(false)}
+               />
+               
+               {/* Modal Content */}
+               <motion.div 
+                 initial={{ opacity: 0, scale: 0.9, y: 30 }}
+                 animate={{ opacity: 1, scale: 1, y: 0 }}
+                 exit={{ opacity: 0, scale: 0.9, y: 30 }}
+                 transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }} // Custom Bezier for slick feel
+                 className="relative w-full max-w-lg max-h-[85vh] z-10 flex flex-col"
+               >
+                 <LiquidGlass className="w-full flex flex-col shadow-2xl shadow-amber-900/40 border-amber-500/30 overflow-hidden">
+                    
+                    {/* Schedule Header */}
+                    <div className="p-6 md:p-8 border-b border-white/10 bg-gradient-to-r from-amber-900/20 to-transparent relative">
+                      <button 
+                        onClick={() => setIsScheduleOpen(false)}
+                        className="absolute top-4 right-4 p-2 rounded-full text-white/50 hover:bg-white/10 hover:text-white transition-colors"
+                      >
+                        <X size={20} />
+                      </button>
+                      <h3 className="text-3xl font-amita font-bold text-white flex items-center gap-3">
+                        <Calendar className="text-amber-500" /> 
+                        Event Schedule
+                      </h3>
+                      <p className="text-amber-200/60 font-merriweather text-sm mt-1">Don't miss a beat.</p>
+                    </div>
+
+                    {/* Day Switcher Tabs */}
+                    <div className="flex p-2 bg-black/40 gap-2">
+                      {Object.keys(scheduleData).map((day) => (
+                        <button
+                          key={day}
+                          onClick={() => setActiveDay(day)}
+                          className={`flex-1 py-3 text-sm font-bold uppercase tracking-wider rounded transition-all relative overflow-hidden ${
+                            activeDay === day ? 'text-black' : 'text-slate-400 hover:text-amber-200 hover:bg-white/5'
+                          }`}
+                        >
+                          {activeDay === day && (
+                            <motion.div 
+                              layoutId="activeDayBg"
+                              className="absolute inset-0 bg-amber-500"
+                              transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                            />
+                          )}
+                          <span className="relative z-10">{day}</span>
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Timeline Body */}
+                    <div className="overflow-y-auto p-6 bg-black/20 custom-scrollbar h-[400px]">
+                      <AnimatePresence mode="wait">
+                        <motion.div
+                          key={activeDay}
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: -20 }}
+                          transition={{ duration: 0.2 }}
+                          className="space-y-4"
+                        >
+                          {scheduleData[activeDay].map((item, idx) => (
+                            <div key={idx} className="group relative pl-4 border-l-2 border-white/10 hover:border-amber-500 transition-colors duration-300">
+                              {/* Connector Dot */}
+                              <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-[#1a0505] border-2 border-white/20 group-hover:border-amber-500 group-hover:bg-amber-500 transition-all duration-300" />
+                              
+                              <div className="bg-white/5 p-4 rounded-lg border border-white/5 group-hover:border-amber-500/30 group-hover:bg-amber-900/10 transition-all">
+                                <div className="flex justify-between items-start mb-2">
+                                  <div className="flex items-center gap-2 text-amber-500 text-xs font-bold uppercase tracking-wider">
+                                    <Clock size={12} />
+                                    {item.time}
+                                  </div>
+                                  <span className="text-[10px] px-2 py-0.5 rounded bg-white/10 text-slate-300 border border-white/5">
+                                    {item.type}
+                                  </span>
+                                </div>
+                                <h4 className="text-white font-bold text-lg mb-1 group-hover:text-amber-200 transition-colors">
+                                  {item.title}
+                                </h4>
+                                <div className="flex items-center gap-1.5 text-slate-400 text-xs">
+                                  <MapPin size={12} className="text-amber-500/60" />
+                                  {item.loc}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </motion.div>
+                      </AnimatePresence>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="p-4 bg-black/40 border-t border-white/5 text-center">
+                      <a href="#" className="text-xs text-amber-500/60 hover:text-amber-400 uppercase tracking-widest font-bold flex items-center justify-center gap-1">
+                        Download PDF Version <ChevronRight size={12} />
+                      </a>
+                    </div>
+
+                 </LiquidGlass>
+               </motion.div>
+             </div>
+          )}
+
         </AnimatePresence>,
         document.body
       )}
