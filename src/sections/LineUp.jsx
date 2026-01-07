@@ -127,10 +127,12 @@ const LineUp = ({ onModalChange }) => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
                 transition={{ duration: 0.3 }}
-                // UPDATED: max-w-3xl for a smaller popup
                 className="relative w-full max-w-3xl max-h-[85vh] z-10"
               >
-                <LiquidGlass className="w-full h-full overflow-hidden flex flex-col md:flex-row shadow-2xl shadow-amber-900/50 border-amber-500/30">
+                {/* UPDATED: Added md:min-h-[500px] to regularize modal size 
+                  so image or text doesn't collapse or stretch oddly 
+                */}
+                <LiquidGlass className="w-full h-full md:min-h-[500px] overflow-hidden flex flex-col md:flex-row shadow-2xl shadow-amber-900/50 border-amber-500/30">
                   <button 
                     onClick={() => setSelectedArtist(null)}
                     className="absolute top-4 right-4 z-30 p-2 rounded-full bg-black/40 text-white/70 hover:bg-amber-500 hover:text-black transition-colors backdrop-blur-sm"
@@ -140,10 +142,13 @@ const LineUp = ({ onModalChange }) => {
 
                   <div className="w-full md:w-2/5 h-64 md:h-auto relative shrink-0">
                     <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black via-transparent to-transparent z-10" />
+                    {/* UPDATED: Image is now absolute inset-0.
+                      This stops the image from 'pushing' the height. It will simply fill the container.
+                    */}
                     <img 
                       src={selectedArtist.img} 
                       alt={selectedArtist.name} 
-                      className="w-full h-full object-cover"
+                      className="absolute inset-0 w-full h-full object-cover"
                     />
                     <div className="absolute bottom-4 left-4 md:hidden z-20">
                       <h3 className="text-3xl font-amita font-bold text-white">{selectedArtist.name}</h3>

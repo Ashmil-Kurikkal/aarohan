@@ -174,10 +174,12 @@ const EventsGrid = ({ onModalChange }) => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
-                // UPDATED: max-w-2xl for smaller popup
                 className="relative w-full max-w-2xl max-h-[85vh] z-10"
               >
-                <LiquidGlass className="w-full h-full overflow-hidden flex flex-col md:flex-row shadow-2xl shadow-amber-900/40 border-amber-500/30">
+                {/* UPDATED: md:min-h-[450px] forces a standard size 
+                   so the modal feels substantial even if text is short. 
+                */}
+                <LiquidGlass className="w-full h-full md:min-h-[450px] overflow-hidden flex flex-col md:flex-row shadow-2xl shadow-amber-900/40 border-amber-500/30">
                    <button 
                     onClick={() => setSelectedEvent(null)}
                     className="absolute top-4 right-4 z-20 p-2 rounded-full bg-black/40 text-white/70 hover:bg-amber-500 hover:text-black transition-colors backdrop-blur-sm"
@@ -186,7 +188,9 @@ const EventsGrid = ({ onModalChange }) => {
                   </button>
                   <div className="w-full md:w-2/5 h-48 md:h-auto relative shrink-0">
                     <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black via-black/20 to-transparent z-10" />
-                    <img src={selectedEvent.image} alt={selectedEvent.title} className="w-full h-full object-cover" />
+                    {/* UPDATED: absolute inset-0 to prevent image intrinsic height from breaking layout
+                    */}
+                    <img src={selectedEvent.image} alt={selectedEvent.title} className="absolute inset-0 w-full h-full object-cover" />
                     <div className="absolute bottom-4 left-4 md:hidden z-20">
                        <h3 className="text-3xl font-amita font-bold text-white">{selectedEvent.title}</h3>
                     </div>
