@@ -92,9 +92,8 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
           <p>© 2026 Aarohan Cultural Fest. All rights reserved.</p>
           <div className="flex items-center gap-2">
-            <span>Made with</span>
-            <Heart size={12} className="text-red-500 fill-red-500 animate-pulse" />by
-            <a href="https://github.com/Ashmil-Kurikkal" target="_blank" rel="noopener noreferrer" className="text-amber-500 hover:text-amber-300 transition-colors">Ashmil Kurikkal</a>
+            <span>Designed and Developed by</span>
+            <a href="https://github.com/Ashmil-Kurikkal" target="_blank" rel="noopener noreferrer" className="text-amber-500 hover:text-amber-300 transition-colors">Ashmil Kurikkal</a><Heart size={12} className="text-red-500 fill-red-500 animate-pulse" />
           </div>
         </div>
       </div>
